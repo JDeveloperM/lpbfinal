@@ -1,0 +1,172 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
+}
+
+body {
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  :root {
+    /* Light theme variables */
+    --background: 0 0% 100%;
+    --foreground: 220 30% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 30% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 30% 10%;
+    --primary: 24 95% 53%; /* Orange */
+    --primary-foreground: 0 0% 10%;
+    --secondary: 220 25% 25%; /* Dark blue */
+    --secondary-foreground: 220 30% 10%;
+    --muted: 220 10% 96%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 24 95% 53%; /* Changed to orange instead of purple */
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 10% 90%;
+    --input: 220 10% 90%;
+    --ring: 24 95% 53%; /* Orange */
+    --chart-1: 24 95% 53%; /* Orange */
+    --chart-2: 220 25% 25%; /* Dark blue */
+    --chart-3: 220 30% 35%;
+    --chart-4: 24 85% 53%;
+    --chart-5: 220 25% 45%;
+    --radius: 0.75rem;
+
+    --orange: 24 95% 53%;
+    --orange-foreground: 0 0% 10%;
+  }
+
+  .dark {
+    --background: 220 25% 10%; /* Deep dark blue */
+    --foreground: 0 0% 100%;   /* Pure white */
+
+    --card: 220 25% 13%; /* Slightly lighter dark blue */
+    --card-foreground: 0 0% 100%;
+
+    --popover: 220 25% 12%; /* Dark blue popover */
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 24 95% 53%; /* Orange */
+    --primary-foreground: 0 0% 10%;
+
+    --secondary: 220 25% 25%; /* Dark blue */
+    --secondary-foreground: 220 15% 90%;
+
+    --muted: 220 20% 30%;
+    --muted-foreground: 220 15% 65%;
+
+    --accent: 24 95% 53%; /* Changed to orange instead of purple */
+    --accent-foreground: 0 0% 10%;
+
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 25% 20%;
+    --input: 220 25% 18%;
+    --ring: 24 95% 53%; /* Orange */
+
+    --chart-1: 24 95% 53%; /* Orange */
+    --chart-2: 220 25% 25%; /* Dark blue */
+    --chart-3: 220 30% 35%;
+    --chart-4: 24 85% 53%;
+    --chart-5: 220 25% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .glass-effect {
+    background: hsl(var(--card) / 0.65);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid hsl(var(--border) / 0.3);
+    box-shadow: 0 8px 32px 0 hsla(var(--primary), 0.15);
+  }
+
+  .shining-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -80%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(to right, transparent 0%, hsl(var(--primary-foreground) / 0.2) 50%, transparent 100%);
+    transform: skewX(-25deg);
+    transition: left 0.7s ease-in-out;
+  }
+
+  .shining-button:hover::before {
+    left: 120%;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 10s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Responsive holders grid */
+  .holders-grid {
+    grid-template-columns: repeat(20, minmax(0, 1fr));
+  }
+
+  @media (min-width: 640px) {
+    .holders-grid {
+      grid-template-columns: repeat(25, minmax(0, 1fr));
+    }
+  }
+}
+
+/* Global keyframes */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.4; /* Base opacity for the color classes like bg-primary/40 */
+  }
+  50% {
+    opacity: 0.7; /* Pulsed opacity */
+  }
+}
