@@ -4,8 +4,7 @@ import React, { ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WagmiProvider, cookieToInitialState, type Config } from 'wagmi'
 import { createAppKit } from '@reown/appkit/react'
-import { config, networks, projectId, wagmiAdapter } from '@/config'
-import { base } from '@reown/appkit/networks'
+import { config, networks, projectId, wagmiAdapter, sonic } from '@/config'
 
 const queryClient = new QueryClient()
 
@@ -23,7 +22,7 @@ if (!projectId) {
     adapters: [wagmiAdapter],
     projectId: projectId!,
     networks: networks,
-    defaultNetwork: base,
+    defaultNetwork: sonic,
     metadata,
     features: { analytics: true },
   })

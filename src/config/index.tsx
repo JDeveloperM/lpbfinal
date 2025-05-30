@@ -1,6 +1,5 @@
 import { cookieStorage, createStorage } from 'wagmi'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
-import { mainnet, arbitrum, base } from '@reown/appkit/networks'
 import type { Chain } from 'viem'
 
 export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID
@@ -9,7 +8,29 @@ if (!projectId) {
   throw new Error('NEXT_PUBLIC_PROJECT_ID is not defined. Please set it in .env.local')
 }
 
-export const networks: [Chain, ...Chain[]] = [base, mainnet, arbitrum]
+// Sonic Mainnet configuration
+export const sonic: Chain = {
+  id: 146,
+  name: 'Sonic',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Sonic',
+    symbol: 'S',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.soniclabs.com'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'SonicScan',
+      url: 'https://sonicscan.org',
+    },
+  },
+}
+
+export const networks: [Chain, ...Chain[]] = [sonic]
 
 export const wagmiAdapter = new WagmiAdapter({
   storage: createStorage({ storage: cookieStorage }),
