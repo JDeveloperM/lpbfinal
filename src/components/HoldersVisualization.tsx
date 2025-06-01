@@ -2,7 +2,10 @@
 
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Users, TrendingUp, Wallet } from 'lucide-react'
+import { Users, TrendingUp, Wallet, Loader2, ExternalLink } from 'lucide-react'
+import { useTokenData } from '@/hooks/use-token-data'
+import { useRealHolders } from '@/hooks/use-real-holders'
+import { formatUnits } from 'viem'
 
 interface Holder {
   name: string
@@ -11,46 +14,7 @@ interface Holder {
   address: string
 }
 
-const generateHolderData = (): Holder[] => {
-  const holders: Holder[] = []
-
-  // Top 10 holders (whales) - positions 1-10
-  const whalePercentages = [8.5, 6.2, 4.8, 3.9, 3.1, 2.7, 2.3, 1.9, 1.6, 1.4]
-  whalePercentages.forEach((percentage, i) => {
-    holders.push({
-      name: `Whale #${i + 1}`,
-      value: percentage,
-      category: 'whale',
-      address: `0x${Math.random().toString(16).substring(2, 10)}...${Math.random().toString(16).substring(2, 6)}`
-    })
-  })
-
-  // Medium holders (11-30) - positions 11-30
-  for (let i = 10; i < 30; i++) {
-    const percentage = Math.random() * 1.2 + 0.3
-    holders.push({
-      name: `Holder #${i + 1}`,
-      value: percentage,
-      category: 'medium',
-      address: `0x${Math.random().toString(16).substring(2, 10)}...${Math.random().toString(16).substring(2, 6)}`
-    })
-  }
-
-  // Small holders (31-100) - positions 31-100
-  for (let i = 30; i < 100; i++) {
-    const percentage = Math.random() * 0.3 + 0.05
-    holders.push({
-      name: `Holder #${i + 1}`,
-      value: percentage,
-      category: 'small',
-      address: `0x${Math.random().toString(16).substring(2, 10)}...${Math.random().toString(16).substring(2, 6)}`
-    })
-  }
-
-  // Ensure we have exactly 100 holders
-  console.log(`Generated ${holders.length} holders`)
-  return holders.sort((a, b) => b.value - a.value)
-}
+// Demo data generation function removed - now using only real blockchain data
 
 const getColorByCategory = (category: string): string => {
   switch (category) {
@@ -83,15 +47,58 @@ const HoldersVisualization: React.FC = () => {
   const [hoveredHolder, setHoveredHolder] = useState<Holder | null>(null)
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 })
 
+  const { tokenData, isLoading: tokenLoading, error: tokenError, hasTokenData } = useTokenData()
+  const {
+    holders: realHolders,
+    isLoading: holdersLoading,
+    error: holdersError,
+    hasRealData,
+    totalHolders
+  } = useRealHolders()
+
   useEffect(() => {
-    setHolders(generateHolderData())
-  }, [])
+    if (hasRealData && realHolders.length > 0) {
+      // Convert real holder data to our format - ONLY real data, no demo
+      const convertedHolders = realHolders.map((holder) => ({
+        name: `Holder #${holder.rank}`,
+        value: holder.percentage,
+        category: holder.percentage > 2 ? 'whale' : holder.percentage > 1 ? 'medium' : 'small',
+        address: holder.address
+      }));
+
+      setHolders(convertedHolders);
+      console.log('✅ Using ONLY real holder data:', convertedHolders.length, 'holders');
+    } else {
+      // If no real data, show empty state
+      setHolders([]);
+      console.log('⚠️ No real holder data available');
+    }
+  }, [realHolders, hasRealData])
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-center gap-2 text-orange-400 text-lg font-semibold">
-        <Users className="h-5 w-5" />
-        Top 100 Holders Distribution
+      <div className="flex flex-col items-center justify-center gap-2">
+        <div className="flex items-center gap-2 text-orange-400 text-lg font-semibold">
+          <Users className="h-5 w-5" />
+          Top 100 Real Holders
+        </div>
+        <div className="text-center space-y-1">
+          <p className="text-xs text-muted-foreground">
+            {hasRealData
+              ? `Real SonicScan API data • ${totalHolders > 0 ? totalHolders.toLocaleString() + ' total holders' : 'Loading holder count...'}`
+              : 'Loading real holder data from SonicScan...'
+            }
+          </p>
+          <a
+            href="https://sonicscan.org/token/tokenholderchart/0x001bFF4b6da770f445A740227224D3c8b48e6fb2"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 underline"
+          >
+            View Complete Data on SonicScan
+            <ExternalLink className="h-3 w-3" />
+          </a>
+        </div>
       </div>
       <Card className="relative bg-gradient-to-br from-[#191e29] to-[#1a1f2e] border border-orange-500/20 shadow-[0_0_25px_rgba(249,115,22,0.15)] overflow-hidden">
         {/* Background Image */}
@@ -102,52 +109,80 @@ const HoldersVisualization: React.FC = () => {
           }}
         />
         <CardContent className="space-y-4 sm:space-y-6 px-3 sm:px-6 py-4 sm:py-6 relative" style={{ zIndex: 2 }}>
-        {/* Stats Overview */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
-          <div className="space-y-1">
-            <div className="text-base sm:text-lg font-bold" style={{ color: '#fd7b0f' }}>10</div>
-            <div className="text-xs text-muted-foreground">Whales (>1%)</div>
+        {(tokenLoading || holdersLoading) ? (
+          <div className="flex items-center justify-center h-32">
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">
+                {holdersLoading ? 'Loading real holder data...' : 'Loading token data...'}
+              </span>
+            </div>
           </div>
-          <div className="space-y-1">
-            <div className="text-base sm:text-lg font-bold" style={{ color: '#2a4aff' }}>20</div>
-            <div className="text-xs text-muted-foreground">Medium (0.3-1%)</div>
+        ) : (tokenError && holdersError) ? (
+          <div className="flex items-center justify-center h-32">
+            <span className="text-sm text-red-400">Using demo holder data</span>
           </div>
-          <div className="space-y-1">
-            <div className="text-base sm:text-lg font-bold" style={{ color: '#607d8b' }}>70</div>
-            <div className="text-xs text-muted-foreground">Small (&lt;0.3%)</div>
-          </div>
-        </div>
+        ) : (
+          <>
+            {/* Stats Overview */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
+              <div className="space-y-1">
+                <div className="text-base sm:text-lg font-bold" style={{ color: '#fd7b0f' }}>
+                  {holders.filter(h => h.category === 'whale').length}
+                </div>
+                <div className="text-xs text-muted-foreground">Whales (>2%)</div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-base sm:text-lg font-bold" style={{ color: '#2a4aff' }}>
+                  {holders.filter(h => h.category === 'medium').length}
+                </div>
+                <div className="text-xs text-muted-foreground">Medium (1-2%)</div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-base sm:text-lg font-bold" style={{ color: '#607d8b' }}>
+                  {holders.filter(h => h.category === 'small').length}
+                </div>
+                <div className="text-xs text-muted-foreground">Small (&lt;1%)</div>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Holders Grid Visualization */}
-        <div className="p-2 sm:p-4">
-          <div className="text-xs text-center text-muted-foreground mb-2">
-            Showing {Math.min(holders.length, 100)} holders
-          </div>
-          <div
-            className="w-full max-w-full mx-auto overflow-x-auto holders-grid"
-            style={{
-              display: 'grid',
-              gap: '3px'
-            }}
-          >
+        {!(tokenLoading || holdersLoading) && holders.length > 0 && (
+          <div className="p-2 sm:p-4">
+            <div className="text-xs text-center text-muted-foreground mb-2">
+              Showing top {holders.length} holders from SonicScan API
+            </div>
+            <div
+              className="w-full max-w-full mx-auto overflow-x-auto"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(20, 1fr)',
+                gridTemplateRows: 'repeat(5, 1fr)',
+                gap: '2px',
+                aspectRatio: '4/1'
+              }}
+            >
             {holders.slice(0, 100).map((holder, index) => (
               <div
                 key={index}
-                className="aspect-square transition-all duration-200 hover:scale-110 cursor-pointer relative overflow-hidden"
+                className="aspect-square transition-all duration-200 hover:scale-110 cursor-pointer relative overflow-hidden p-1"
                 style={{
                   borderRadius: '50%',
                   boxShadow: `
-                    0 0 10px ${getColorByCategory(holder.category)}40,
-                    0 0 20px ${getColorByCategory(holder.category)}20,
+                    0 0 6px ${getColorByCategory(holder.category)}40,
+                    0 0 12px ${getColorByCategory(holder.category)}20,
                     inset 0 1px 0 rgba(255,255,255,0.3),
                     inset 0 -1px 0 rgba(0,0,0,0.5),
-                    0 2px 8px rgba(0,0,0,0.6)
+                    0 1px 4px rgba(0,0,0,0.6)
                   `,
                   background: `
                     radial-gradient(circle at 30% 30%, ${getColorByCategory(holder.category)}FF, ${getColorByCategory(holder.category)}CC 40%, ${getDarkerColorByCategory(holder.category)}AA 70%, ${getDarkerColorByCategory(holder.category)}88)
                   `,
                   border: `1px solid ${getColorByCategory(holder.category)}60`,
                   position: 'relative',
+                  transform: 'scale(0.8)',
                 }}
                 onMouseEnter={(e) => {
                   setHoveredHolder(holder)
@@ -181,8 +216,9 @@ const HoldersVisualization: React.FC = () => {
                 />
               </div>
             ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Tooltip */}
         {hoveredHolder && (
@@ -197,13 +233,16 @@ const HoldersVisualization: React.FC = () => {
             <div className="bg-gray-900/95 backdrop-blur-sm border border-orange-500/30 rounded-lg p-3 shadow-xl">
               <div className="text-center space-y-1">
                 <div className="font-semibold text-orange-400 text-sm">
-                  {hoveredHolder.name}
+                  {hoveredHolder.name} • SonicScan API
                 </div>
                 <div className="text-lg font-bold text-white">
                   {hoveredHolder.value.toFixed(3)}% of supply
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {(hoveredHolder.value * 10000).toLocaleString()} LPB tokens
+                  {hasTokenData && tokenData
+                    ? `${(hoveredHolder.value * Number(formatUnits(tokenData.totalSupply, tokenData.decimals)) / 100).toLocaleString()} ${tokenData.symbol} tokens`
+                    : `${(hoveredHolder.value * 10000).toLocaleString()} LPB tokens`
+                  }
                 </div>
                 <div className="text-xs text-muted-foreground font-mono">
                   {hoveredHolder.address}
@@ -214,16 +253,42 @@ const HoldersVisualization: React.FC = () => {
         )}
 
         {/* Distribution Summary */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0">
-          <div className="flex items-center gap-2 text-xs">
-            <TrendingUp className="h-3 w-3 text-green-500" />
-            <span className="text-muted-foreground">Healthy Distribution</span>
+        {!(tokenLoading || holdersLoading) && (
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0">
+            <div className="flex items-center gap-2 text-xs">
+              <TrendingUp className="h-3 w-3 text-green-500" />
+              <span className="text-muted-foreground">
+                {hasRealData ? 'SonicScan API Data' : 'Loading API Data...'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <Wallet className="h-3 w-3 text-blue-500" />
+              <span className="text-muted-foreground">
+                {hasRealData ? `${totalHolders.toLocaleString()} Total Holders` : 'Fetching holder count...'}
+              </span>
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-xs">
-            <Wallet className="h-3 w-3 text-blue-500" />
-            <span className="text-muted-foreground">1,247 Total Holders</span>
+        )}
+
+        {/* Empty State */}
+        {!(tokenLoading || holdersLoading) && holders.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <Users className="h-12 w-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold text-muted-foreground mb-2">No Holder Data Available</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Unable to load real holder data at this time.
+            </p>
+            <a
+              href="https://sonicscan.org/token/tokenholderchart/0x001bFF4b6da770f445A740227224D3c8b48e6fb2"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300 underline"
+            >
+              View on SonicScan
+              <ExternalLink className="h-4 w-4" />
+            </a>
           </div>
-        </div>
+        )}
         </CardContent>
       </Card>
     </div>

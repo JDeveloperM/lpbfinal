@@ -11,13 +11,15 @@ export default function BurnloopCountdown() {
     hyperloopProgress,
     isLoading,
     isReadyToHyperloop,
+    isHyperloopOnCooldown,
     hyperloopTimeLeft,
     executeHyperloop,
     isExecuting,
     isExecuted,
     contractAddress,
     hasHyperloopData,
-    hyperloopError
+    hyperloopError,
+    hyperInterval
   } = useBurnCountdown();
 
   if (isLoading) {
@@ -34,17 +36,17 @@ export default function BurnloopCountdown() {
       {/* Countdown Display */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          {isReadyToHyperloop ? (
-            <Flame className="h-4 w-4 text-blue-500 animate-pulse" />
+          {isHyperloopOnCooldown ? (
+            <Clock className="h-4 w-4 text-orange-500" />
           ) : (
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <Flame className="h-4 w-4 text-blue-500 animate-pulse" />
           )}
-          <span className={`text-sm font-mono ${isReadyToHyperloop ? 'text-blue-500 font-bold animate-pulse' : 'text-foreground'}`}>
-            {isReadyToHyperloop ? 'READY!' : hyperloopFormattedTime}
+          <span className={`text-sm font-mono ${isHyperloopOnCooldown ? 'text-orange-500' : 'text-blue-500 font-bold animate-pulse'}`}>
+            {isHyperloopOnCooldown ? hyperloopFormattedTime : 'READY!'}
           </span>
         </div>
         <span className="text-xs text-muted-foreground">
-          {isReadyToHyperloop ? 'Hyper Loop Available' : 'Next Hyper Loop'}
+          {isHyperloopOnCooldown ? 'Cooldown Active' : 'Hyper Loop Available'}
         </span>
       </div>
 
@@ -57,49 +59,54 @@ export default function BurnloopCountdown() {
         <div className="flex justify-between text-xs text-muted-foreground">
           <span>Last Hyper Loop</span>
           <span>{Math.round(hyperloopProgress)}%</span>
-          <span>15m Cycle</span>
+          <span>{Math.round(hyperInterval / 60)}m Cycle</span>
         </div>
       </div>
 
-      {/* Status Text and Hyper Loop Button */}
-      {isReadyToHyperloop ? (
-        <div className="space-y-2">
-          <Button
-            onClick={executeHyperloop}
-            disabled={isExecuting}
-            size="sm"
-            className="w-full h-8 text-xs bg-orange-600 hover:bg-orange-700 text-white"
-          >
-            {isExecuting ? (
-              <>
-                <Loader2 className="h-3 w-3 animate-spin mr-1" />
-                Executing...
-              </>
-            ) : isExecuted ? (
-              'Executed!'
-            ) : (
-              <>
-                <Flame className="h-3 w-3 mr-1" />
-                Execute Hyper Loop
-              </>
-            )}
-          </Button>
-          <p className="text-xs text-muted-foreground text-center">
-            {isExecuted ? 'Hyper Loop executed successfully!' : 'Ready to execute hyper loop'}
-          </p>
-        </div>
-      ) : (
-        <p className="text-sm text-muted-foreground text-center">
-          {`${hyperloopTimeLeft.hours}h ${hyperloopTimeLeft.minutes}m until next hyper loop`}
+      {/* Hyper Loop Button - Always Visible */}
+      <div className="space-y-2">
+        <Button
+          onClick={executeHyperloop}
+          disabled={isExecuting || isHyperloopOnCooldown}
+          size="sm"
+          className={`w-full h-8 text-xs ${
+            isHyperloopOnCooldown
+              ? 'bg-gray-600 hover:bg-gray-600 cursor-not-allowed'
+              : 'bg-orange-600 hover:bg-orange-700'
+          } text-white`}
+        >
+          {isExecuting ? (
+            <>
+              <Loader2 className="h-3 w-3 animate-spin mr-1" />
+              Executing...
+            </>
+          ) : isExecuted ? (
+            'Executed!'
+          ) : isHyperloopOnCooldown ? (
+            <>
+              <Clock className="h-3 w-3 mr-1" />
+              Cooldown: {hyperloopFormattedTime}
+            </>
+          ) : (
+            <>
+              <Flame className="h-3 w-3 mr-1" />
+              Execute Hyper Loop
+            </>
+          )}
+        </Button>
+        <p className="text-xs text-muted-foreground text-center">
+          {isExecuted ? 'Hyper Loop executed successfully!' :
+           isHyperloopOnCooldown ? `Next execution available in ${hyperloopFormattedTime}` :
+           'Ready to execute hyper loop'}
         </p>
-      )}
+      </div>
 
       {/* Contract Info */}
       <div className="pt-3 border-t border-border/50">
         <div className="flex items-center justify-between">
           <span className="text-xs text-muted-foreground">Contract:</span>
           <a
-            href={`https://etherscan.io/address/${contractAddress}`}
+            href={`https://sonicscan.org/address/${contractAddress}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center space-x-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
@@ -119,7 +126,7 @@ export default function BurnloopCountdown() {
           }`} />
         </div>
         <p className="text-xs text-muted-foreground text-center mt-2">
-          hyperloop() • 15m intervals
+          hyperloop() • {Math.round(hyperInterval / 60)}m cooldown
         </p>
         <p className="text-xs text-muted-foreground text-center mt-1 opacity-75">
           Claims fees • Burns $LPB • Amplifies volume

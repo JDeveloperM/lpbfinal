@@ -26,8 +26,8 @@ export default function Home() {
           {/* Compact Contract Address Display */}
           <div className="flex items-center justify-center bg-card/50 backdrop-blur-sm p-2 rounded-lg max-w-2xl w-full gap-2">
             <p className="text-xs text-muted-foreground">CA:</p>
-            <code className="font-mono text-xs"> C o m i n g --   S o o n </code>
-            <CopyButton text="0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D" />
+            <code className="font-mono text-xs"> 0x001bFF4b6da770f445A740227224D3c8b48e6fb2 </code>
+            <CopyButton text="0x001bFF4b6da770f445A740227224D3c8b48e6fb2" />
           </div>
           
           {/* Add Built on Sonic section */}

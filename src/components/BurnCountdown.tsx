@@ -18,8 +18,7 @@ export default function BurnCountdown() {
     contractAddress,
     hasContractData,
     contractError,
-    burnInterval,
-    burnedSupply
+    burnInterval
   } = useBurnCountdown();
 
   if (isLoading) {
@@ -59,7 +58,7 @@ export default function BurnCountdown() {
         <div className="flex justify-between text-xs text-muted-foreground">
           <span>Last Burn</span>
           <span>{Math.round(progress)}%</span>
-          <span>8h Cycle</span>
+          <span>{Math.round(burnInterval / 3600)}h Cycle</span>
         </div>
       </div>
 
@@ -101,7 +100,7 @@ export default function BurnCountdown() {
         <div className="flex items-center justify-between">
           <span className="text-xs text-muted-foreground">Contract:</span>
           <a
-            href={`https://etherscan.io/address/${contractAddress}`}
+            href={`https://sonicscan.org/address/${contractAddress}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center space-x-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
@@ -121,10 +120,10 @@ export default function BurnCountdown() {
           }`} />
         </div>
         <p className="text-xs text-muted-foreground text-center mt-2">
-          burnFUEGO() • {Math.round(burnInterval / 3600)}h intervals
+          burnloop() • {Math.round(burnInterval / 3600)}h intervals
         </p>
         <p className="text-xs text-muted-foreground text-center mt-1 opacity-75">
-          {burnedSupply} FUEGO burned • Dynamic intervals
+          Withdraws 1% POL • Burns $LPB • Sends $wS to Yield Reactor
         </p>
       </div>
     </div>
