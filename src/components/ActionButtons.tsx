@@ -7,21 +7,20 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useBurnCountdown } from "@/hooks/use-burn-countdown";
-import { ExternalLink, Flame, Loader2 } from "lucide-react";
+import { ExternalLink, Flame } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function ActionButtons() {
-  const {
-    executeHyperloop,
-    isExecuting,
-    isReadyToHyperloop,
-    isExecuted,
-    hyperloopTimeLeft
-  } = useBurnCountdown();
+  const router = useRouter();
+
+  const handleYieldReactorRedirect = () => {
+    // Redirect to yield reactor page
+    router.push('/yield-reactor');
+  };
 
   const handleTradeRedirect = () => {
     // Redirect to Shadow DEX with LPB trading pair
-    window.open('https://shadow.so/swap', '_blank', 'noopener,noreferrer');
+    window.open('https://www.shadow.so/trade?inputCurrency=0x0000000000000000000000000000000000000000&outputCurrency=0x001bFF4b6da770f445A740227224D3c8b48e6fb2', '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -31,34 +30,15 @@ export default function ActionButtons() {
           <TooltipTrigger asChild>
             <Button
               size="lg"
-              className="w-full sm:w-auto border-2 border-primary/30 hover:bg-primary/10 text-foreground font-semibold shadow-lg hover:shadow-xl transition-all duration-300 px-4 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl"
-              onClick={executeHyperloop}
-              disabled={!isReadyToHyperloop || isExecuting}
+              className="w-full sm:w-auto border-2 border-orange-500/30 hover:bg-orange-500/10 text-foreground font-semibold shadow-lg hover:shadow-xl transition-all duration-300 px-4 sm:px-8 py-4 sm:py-6 text-base sm:text-lg rounded-xl bg-gradient-to-r from-orange-600/20 to-red-600/20 hover:from-orange-600/30 hover:to-red-600/30"
+              onClick={handleYieldReactorRedirect}
             >
-              {isExecuting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Executing...
-                </>
-              ) : isExecuted ? (
-                <>
-                  <Flame className="h-4 w-4 mr-2" />
-                  Executed!
-                </>
-              ) : (
-                <>
-                  <Flame className="h-4 w-4 mr-2" />
-                  Execute Hyper Loop
-                </>
-              )}
+              <Flame className="h-4 w-4 mr-2" />
+              Execute Hyper Loop
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            {isReadyToHyperloop ? (
-              <p>Ready to execute hyperloop! Claims fees, burns $LPB, and amplifies volume.</p>
-            ) : (
-              <p>Next hyperloop in {hyperloopTimeLeft.hours}h {hyperloopTimeLeft.minutes}m {hyperloopTimeLeft.seconds}s</p>
-            )}
+            <p>Go to Yield Reactor to execute hyperloop and manage burn mechanisms</p>
           </TooltipContent>
         </Tooltip>
 
