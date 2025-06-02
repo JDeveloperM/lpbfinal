@@ -101,35 +101,13 @@ export default function BurnloopCountdown() {
         </p>
       </div>
 
-      {/* Contract Info */}
+      {/* Mechanism Info */}
       <div className="pt-3 border-t border-border/50">
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">Contract:</span>
-          <a
-            href={`https://sonicscan.org/address/${contractAddress}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center space-x-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
-          >
-            <span className="font-mono">{contractAddress.slice(0, 6)}...{contractAddress.slice(-4)}</span>
-            <ExternalLink className="h-3 w-3" />
-          </a>
-        </div>
-        <div className="flex items-center justify-between mt-2">
-          <span className="text-xs text-muted-foreground">
-            {hasHyperloopData ? 'Live Contract' : hyperloopError ? 'Contract Error' : 'Demo Mode'}
-          </span>
-          <div className={`h-2 w-2 rounded-full ${
-            hasHyperloopData ? 'bg-green-500' :
-            hyperloopError ? 'bg-red-500' :
-            'bg-yellow-500'
-          }`} />
-        </div>
         <p className="text-xs text-muted-foreground text-center mt-2">
           hyperloop() • {Math.round(hyperInterval / 60)}m cooldown
         </p>
         <p className="text-xs text-muted-foreground text-center mt-1 opacity-75">
-          Claims fees • Burns $LPB • Amplifies volume
+          Claims fees • Burns $LBP • Amplifies volume
         </p>
       </div>
     </div>

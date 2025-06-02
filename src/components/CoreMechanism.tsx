@@ -17,7 +17,7 @@ export default function CoreMechanism() {
                 <Flame className="h-6 w-6 text-orange-500 flex-shrink-0" />
                 <div>
                   <h4 className="font-semibold text-base">Supply Reduction</h4>
-                  <p className="text-sm text-muted-foreground">Reduces circulating supply of $LPB</p>
+                  <p className="text-sm text-muted-foreground">Reduces circulating supply of $LBP</p>
                 </div>
               </div>
             </CardContent>
@@ -178,7 +178,7 @@ export default function CoreMechanism() {
                   <div className="flex items-center justify-center mb-2">
                     <Flame className="w-6 h-6 text-orange-500" />
                   </div>
-                  <h4 className="font-semibold text-sm mb-1">Burns $LPB</h4>
+                  <h4 className="font-semibold text-sm mb-1">Burns $LBP</h4>
                   <p className="text-xs text-muted-foreground">From withdrawn LP tokens</p>
                   <div className="mt-2 text-xs text-orange-400">Step 3</div>
                 </CardContent>
@@ -191,7 +191,7 @@ export default function CoreMechanism() {
                     <RefreshCcw className="w-6 h-6 text-green-500" />
                   </div>
                   <h4 className="font-semibold text-sm mb-1">Recycles $wS</h4>
-                  <p className="text-xs text-muted-foreground">To buy back and recycle $LPB</p>
+                  <p className="text-xs text-muted-foreground">To buy back and recycle $LBP</p>
                   <div className="mt-2 text-xs text-green-400">Step 4</div>
                 </CardContent>
               </Card>

@@ -43,11 +43,6 @@ export function Header() {
 
         {/* Mobile Menu */}
         <MobileMenu />
-
-        {/* Add the wallet connect button */}
-        <div>
-          <appkit-button />
-        </div>
       </div>
     </header>
   )

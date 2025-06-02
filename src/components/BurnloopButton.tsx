@@ -59,7 +59,7 @@ export default function BurnloopButton() {
               <div className="space-y-1">
                 <p className="font-semibold">Ready to execute burnloop!</p>
                 <p className="text-sm">• Withdraws 1% of protocol-owned liquidity</p>
-                <p className="text-sm">• Burns $LPB tokens</p>
+                <p className="text-sm">• Burns $LBP tokens</p>
                 <p className="text-sm">• Sends $wS to Yield Reactor</p>
                 <p className="text-sm">• 8-hour cooldown cycle</p>
               </div>
@@ -68,7 +68,7 @@ export default function BurnloopButton() {
                 <p className="font-semibold">Next burnloop in {burnloopFormattedTime}</p>
                 <p className="text-sm">Automated 8-hour cycle that:</p>
                 <p className="text-sm">• Withdraws 1% POL</p>
-                <p className="text-sm">• Burns $LPB portion</p>
+                <p className="text-sm">• Burns $LBP portion</p>
                 <p className="text-sm">• Recycles paired tokens</p>
               </div>
             )}

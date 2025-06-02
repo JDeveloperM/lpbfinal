@@ -95,35 +95,13 @@ export default function BurnCountdown() {
         </p>
       )}
 
-      {/* Contract Info */}
+      {/* Mechanism Info */}
       <div className="pt-3 border-t border-border/50">
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">Contract:</span>
-          <a
-            href={`https://sonicscan.org/address/${contractAddress}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center space-x-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
-          >
-            <span className="font-mono">{contractAddress.slice(0, 6)}...{contractAddress.slice(-4)}</span>
-            <ExternalLink className="h-3 w-3" />
-          </a>
-        </div>
-        <div className="flex items-center justify-between mt-2">
-          <span className="text-xs text-muted-foreground">
-            {hasContractData ? 'Live Contract' : contractError ? 'Contract Error' : 'Demo Mode'}
-          </span>
-          <div className={`h-2 w-2 rounded-full ${
-            hasContractData ? 'bg-green-500' :
-            contractError ? 'bg-red-500' :
-            'bg-yellow-500'
-          }`} />
-        </div>
         <p className="text-xs text-muted-foreground text-center mt-2">
           burnloop() • {Math.round(burnInterval / 3600)}h intervals
         </p>
         <p className="text-xs text-muted-foreground text-center mt-1 opacity-75">
-          Withdraws 1% POL • Burns $LPB • Sends $wS to Yield Reactor
+          Withdraws 1% POL • Burns $LBP • Sends $wS to Yield Reactor
         </p>
       </div>
     </div>
